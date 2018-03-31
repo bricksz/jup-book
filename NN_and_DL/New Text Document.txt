@@ -1,0 +1,93 @@
+		Lecture 1
+Linear model of Housing Price Predicton
+regression line is a function of (X:size) into the neuron and outputs (Y:price)
+This function goes from zero into a linear line. 
+ReLU - Rectified Linear Unit
+
+x1 = {size, #bedroom, Zipcode, wealth}
+x2 = {family size(size,#bedroom), walkability(zipcode), schoolquality(zipcode,wealth)}
+y = {price}
+
+		Lecture 2
+Logistic Regression (Cost function, Error function)
+Gradient Descent
+
+
+z = w^(T)x + b
+y(hat) = a = sig(z) = 1/(1+e^(-z))
+L(a,y) = -(y log(a)+(1-y)log(1-a))      #loss function
+
+z(x1,w1,x2,w2,b) = (w1)(x1) + (w2)(x2) + b -> y(hat) = a = sig(z) -> L(a,y)
+
+'da' = d[L(a,y)]/da = -(y/a) + [(1-y)/(1-a)]
+
+'dz' = d[L(a,y)]/dz = a-y               #because of chain rule dz = (dL/da)(da/dz) where (da/dz) = a(1-a)
+
+dL/da = -(y/a) + [(1-y)/(1-a)] and da/dz = a(1-a)
+which gives dz = a-y
+
+
+dL/dw1 = 'dw1' = (x1)dz
+dL/dw2 = 'dw2' = (x2)dz
+db = dz
+
+(w1) := (w1) - (h) d(w1)
+(w2) := (w2) - (h) d(w2)
+b := b- (h) db
+
+Logistic regression on m examples #pusdo python
+#initialize these values:
+J = 0 ; d(w1) = 0 ; d(w2) = 0 ; db = 0
+For i = 1 to m:
+    z^(i) = w^(T)x^(i) + b
+    a^(i) = sig(z^(i))
+    J += -[y^(i) log(a^(i)) + (1-y^(i)) log(1-a^(i))]
+    d(z^(i)) = a^(i) - y^(i)
+    d(w1) += x1^(i) d(z^(i))
+    d(w2) += x2^(i) d(z^(i))
+    db += d(z^(i))
+
+J /= m
+d(w1) /= m ; d(w2) /= m ; db /= m           #d(w1) = d(w1)/m , and so on.
+
+'''
+d(w1) = dJ/d(w1)
+
+w1 := w1 - (h) d(w1)
+w2 := w2 - (h) d(w2)
+b := b - (h) db
+'''
+
+Vectorization
+
+Non-vectorized:
+z=0
+for i in range(n-x):
+    z += w[i]**[i]
+z +=b
+
+vectorized:
+z = np.dot(w,x) + b         #np.dot(w,x) = w^(T)x
+
+Lets say you already have a vector(v)
+u = {e^(v1) ..... e^(vn)
+
+u = np.zeros((n,1))
+for i in range(n):
+    u[i]=math.exp(v[i])
+
+better one is:
+import numpy as np
+u=np.exp(v)
+
+#and the same goes for np.log(v) , np.abs(v) , np.maximum(v,0)
+
+Back to the Logistic regression, we can replace the initialization of dw1 and d2
+dw = np.zeroes((n-x,1))
+
+remove the   dw1 += ...
+             dw2 += ...
+and replace with
+dw += x^(i)d(z^(i))
+
+remove 'dw1 /= m' and 'dw2 /= m' with 'dw /=m'
